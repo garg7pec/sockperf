@@ -273,9 +273,6 @@ inline bool Server<IoType, SwitchActivityInfo, SwitchCalcGaps>::server_receive_t
                 log_msg_buffer_file(bufferDumpFile, m_pMsgReply->getBuf());
                 if (fflush(bufferDumpFile)!= 0)
                     log_msg("Could not flush file buffer");
-          
-                if(fsync(fileno(bufferDumpFile)) < 0)
-                    log_msg("Could not flush buffer to OS disk");
             }
 
         if (g_b_exit) return (!do_update);
