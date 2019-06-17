@@ -228,6 +228,7 @@ static const char *const round_trip_str[] = { "latency", "rtt" };
     "\nSockPerf is open source software, see http://github.com/mellanox/sockperf"
 #define log_msg(log_fmt, ...) printf(MODULE_NAME ": " log_fmt "\n", ##__VA_ARGS__)
 #define log_msg_buffer_file(file, buffer) fwrite(buffer, sizeof(uint8_t), sizeof(buffer), file)
+#define log_msg_str_file(file, msg) fwrite(msg, sizeof(char), sizeof(msg), file)
 #define log_msg_file(file, log_fmt, ...) fprintf(file, MODULE_NAME ": " log_fmt "\n", ##__VA_ARGS__)
 #define log_msg_file2(file, log_fmt, ...)                                                          \
     if (1) {                                                                                       \

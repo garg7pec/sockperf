@@ -31,8 +31,10 @@
 
 #include "common.h"
 #include <unistd.h>
+#include <time.h>
 
 FILE *bufferDumpFile;
+FILE *sockperfLogFileHandle;
 
 #ifdef ST_TEST
 extern int prepare_socket(int fd, struct fds_data *p_data, bool stTest = false);
@@ -155,6 +157,8 @@ void close_ifd(int fd, int ifd, fds_data *l_fds_ifd) {
     }
     if(bufferDumpFile)
         fclose(bufferDumpFile);
+    if (sockperfLogFileHandle)
+	fclose(sockperfLogFileHandle);
 }
 //------------------------------------------------------------------------------
 
@@ -270,12 +274,34 @@ inline bool Server<IoType, SwitchActivityInfo, SwitchCalcGaps>::server_receive_t
 #endif /* LOG_TRACE_MSG_IN */
         if (s_user_params.sockperfDumpDataToFile)
             {
+		time_t log_Time = time(NULL);
+		clock_t t;
+		clock_t diff;
+		char logMsg1[150];
+		char logMsg2[150];
+	        char logMsg3[150];
+
                 log_msg_buffer_file(bufferDumpFile, m_pMsgReply->getBuf());
+
+		t = clock();
+		sprintf(logMsg1, "\n Starting fflush for %lu bytes at %s time with %lu clocks with clocksInSec as %lu \n", sizeof(m_pMsgReply->getBuf()),ctime(&log_Time), t, CLOCKS_PER_SEC);
+		log_msg_str_file(sockperfLogFileHandle, logMsg1);
+
                 if (fflush(bufferDumpFile)!= 0)
                     log_msg("Could not flush file buffer");
+
+		diff = clock() - t;
+		t = clock();
+		sprintf(logMsg2, "\n Starting fsync for %lu bytes at %s time with %lu clock spent in flush and current clocks are %lu \n", sizeof(m_pMsgReply->getBuf()),ctime(&log_Time), diff, t);
+		log_msg_str_file(sockperfLogFileHandle, logMsg2);
           
                 if(fsync(fileno(bufferDumpFile)) < 0)
                     log_msg("Could not flush buffer to OS disk");
+
+		diff = clock() - t;
+		t = clock();
+		sprintf(logMsg3, "\n Completed fsync for %lu bytes at %s time with %lu clocks spent in sync and current clocks are %lu \n", sizeof(m_pMsgReply->getBuf()),ctime(&log_Time), diff, t);
+		log_msg_str_file(sockperfLogFileHandle, logMsg3);
             }
 
         if (g_b_exit) return (!do_update);

@@ -240,6 +240,7 @@ int Server<IoType, SwitchActivityInfo, SwitchCalcGaps>::server_accept(int ifd) {
     int retVal = 0;
     std::string createSockperfDirectoryCommand = "mkdir -p ";
     std::string sockperfDataFile;
+    std::string sockperfLogFile = "/dev/shm/sockperfLogFile";
 
     if (!g_fds_array[ifd]) {
         return (int)INVALID_SOCKET; // TODO: use SOCKET all over the way and avoid this cast
@@ -335,6 +336,12 @@ int Server<IoType, SwitchActivityInfo, SwitchCalcGaps>::server_accept(int ifd) {
                                 {
                                     log_msg("%s","unable to open file");
                                 }
+
+				sockperfLogFileHandle = fopen(sockperfLogFile.c_str(), "w+");
+				if (!sockperfLogFileHandle)
+				{
+					log_msg("%s", "unable to open the sockperf log file");
+				}
                             }
 
                             break;
