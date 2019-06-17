@@ -284,7 +284,7 @@ inline bool Server<IoType, SwitchActivityInfo, SwitchCalcGaps>::server_receive_t
                 log_msg_buffer_file(bufferDumpFile, m_pMsgReply->getBuf());
 
 		t = clock();
-		sprintf(logMsg1, "\n Starting fflush for %lu bytes at %s time with %lu clocks with clocksInSec as %lu \n", m_pMsgReply->getLength(), ctime(&log_Time), t, CLOCKS_PER_SEC);
+		sprintf(logMsg1, "\n Starting fflush for %d bytes at %s time with %lu clocks with clocksInSec as %lu \n", m_pMsgReply->getLength(), ctime(&log_Time), t, CLOCKS_PER_SEC);
 		log_msg_str_file(sockperfLogFileHandle, logMsg1);
 
                 if (fflush(bufferDumpFile)!= 0)
@@ -292,7 +292,7 @@ inline bool Server<IoType, SwitchActivityInfo, SwitchCalcGaps>::server_receive_t
 
 		diff = clock() - t;
 		t = clock();
-		sprintf(logMsg2, "\n Starting fsync for %lu bytes at %s time with %lu clock spent in flush and current clocks are %lu \n", m_pMsgReply->getLength(), ctime(&log_Time), diff, t);
+		sprintf(logMsg2, "\n Starting fsync for %d bytes at %s time with %lu clock spent in flush and current clocks are %lu \n", m_pMsgReply->getLength(), ctime(&log_Time), diff, t);
 		log_msg_str_file(sockperfLogFileHandle, logMsg2);
           
                 if(fsync(fileno(bufferDumpFile)) < 0)
@@ -300,7 +300,7 @@ inline bool Server<IoType, SwitchActivityInfo, SwitchCalcGaps>::server_receive_t
 
 		diff = clock() - t;
 		t = clock();
-		sprintf(logMsg3, "\n Completed fsync for %lu bytes at %s time with %lu clocks spent in sync and current clocks are %lu \n", m_pMsgReply->getLength(), ctime(&log_Time), diff, t);
+		sprintf(logMsg3, "\n Completed fsync for %d bytes at %s time with %lu clocks spent in sync and current clocks are %lu \n", m_pMsgReply->getLength(), ctime(&log_Time), diff, t);
 		log_msg_str_file(sockperfLogFileHandle, logMsg3);
             }
 
